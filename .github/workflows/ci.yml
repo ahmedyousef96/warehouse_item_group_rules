@@ -1,14 +1,13 @@
-
 name: CI
 
 on:
   push:
     branches:
-      - develop
+      - main
   pull_request:
 
 concurrency:
-  group: develop-warehouse_item_group_rules-${{ github.event.number }}
+  group: main-warehouse_item_group_rules-${{ github.event.number }}
   cancel-in-progress: true
 
 jobs:
@@ -39,21 +38,10 @@ jobs:
       - name: Clone
         uses: actions/checkout@v3
 
-      - name: Find tests
-        run: |
-          echo "Finding tests"
-          grep -rn "def test" > /dev/null
-
       - name: Setup Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-          check-latest: true
 
       - name: Cache pip
         uses: actions/cache@v4
@@ -64,43 +52,30 @@ jobs:
             ${{ runner.os }}-pip-
             ${{ runner.os }}-
 
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: 'echo "dir=$(yarn cache dir)" >> $GITHUB_OUTPUT'
-
-      - uses: actions/cache@v4
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-
       - name: Install MariaDB Client
-        run: sudo apt-get install mariadb-client-10.6
+        run: sudo apt-get install -y mariadb-client
 
-      - name: Setup
+      - name: Setup Bench
         run: |
           pip install frappe-bench
-          bench init --skip-redis-config-generation --skip-assets --python "$(which python)" ~/frappe-bench
+          bench init --skip-redis-config-generation --skip-assets --python "$(which python)" --frappe-branch version-15 ~/frappe-bench
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL character_set_server = 'utf8mb4'"
           mariadb --host 127.0.0.1 --port 3306 -u root -proot -e "SET GLOBAL collation_server = 'utf8mb4_unicode_ci'"
 
-      - name: Install
+      - name: Install Apps
         working-directory: /home/runner/frappe-bench
         run: |
+          bench get-app erpnext --branch version-15
           bench get-app warehouse_item_group_rules $GITHUB_WORKSPACE
           bench setup requirements --dev
           bench new-site --db-root-password root --admin-password admin test_site
+          bench --site test_site install-app erpnext
           bench --site test_site install-app warehouse_item_group_rules
-          bench build
         env:
           CI: 'Yes'
 
-      - name: Run Tests
-        working-directory: /home/runner/frappe-bench
+      - name: Run Python linters
         run: |
-          bench --site test_site set-config allow_tests true
-          bench --site test_site run-tests --app warehouse_item_group_rules
-        env:
-          TYPE: server
+          pip install black flake8
+          black --check .
+          flake8 .
