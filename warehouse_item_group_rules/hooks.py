@@ -41,12 +41,6 @@ after_install = "warehouse_item_group_rules.install.after_install"
 before_uninstall = "warehouse_item_group_rules.install.before_uninstall"
 
 
-
-
-
-
-
-
 # ------------------
 
 # required_apps = []
@@ -287,4 +281,3 @@ before_uninstall = "warehouse_item_group_rules.install.before_uninstall"
 # ------------
 # List of apps whose translatable strings should be excluded from this app's translations.
 # ignore_translatable_strings_from = []
-

@@ -10,7 +10,6 @@ def after_install():
     create_custom_fields(get_custom_fields())
 
 
-
 def before_uninstall():
     """
     Cleanup custom fields before uninstall
