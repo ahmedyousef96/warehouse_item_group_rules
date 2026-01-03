@@ -1,1 +1,2 @@
 Warehouse Item Group Rules
+Inventory Control

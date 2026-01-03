@@ -6,6 +6,47 @@ app_email = "ay716881@gmail.com"
 app_license = "mit"
 
 # Apps
+
+
+doc_events = {
+    "Stock Entry": {
+        "before_save": "warehouse_item_group_rules.rules.validate_warehouse_item_groups",
+        "before_submit": "warehouse_item_group_rules.rules.validate_warehouse_item_groups",
+    },
+    "Purchase Receipt": {
+        "before_save": "warehouse_item_group_rules.rules.validate_warehouse_item_groups",
+        "before_submit": "warehouse_item_group_rules.rules.validate_warehouse_item_groups",
+    },
+    "Delivery Note": {
+        "before_save": "warehouse_item_group_rules.rules.validate_warehouse_item_groups",
+        "before_submit": "warehouse_item_group_rules.rules.validate_warehouse_item_groups",
+    },
+    "Sales Invoice": {
+        "before_save": "warehouse_item_group_rules.rules.validate_warehouse_item_groups",
+        "before_submit": "warehouse_item_group_rules.rules.validate_warehouse_item_groups",
+    },
+    "Purchase Invoice": {
+        "before_save": "warehouse_item_group_rules.rules.validate_warehouse_item_groups",
+        "before_submit": "warehouse_item_group_rules.rules.validate_warehouse_item_groups",
+    },
+    "Stock Reconciliation": {
+        "before_save": "warehouse_item_group_rules.rules.validate_warehouse_item_groups",
+        "before_submit": "warehouse_item_group_rules.rules.validate_warehouse_item_groups",
+    },
+}
+
+required_apps = ["erpnext"]
+
+after_install = "warehouse_item_group_rules.install.after_install"
+before_uninstall = "warehouse_item_group_rules.install.before_uninstall"
+
+
+
+
+
+
+
+
 # ------------------
 
 # required_apps = []
