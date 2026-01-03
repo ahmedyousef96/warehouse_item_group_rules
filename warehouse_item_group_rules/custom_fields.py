@@ -1,6 +1,3 @@
-from frappe.custom.doctype.custom_field.custom_field import create_custom_fields
-
-
 def get_custom_fields():
     """
     Custom fields required by Warehouse Item Group Rules app
